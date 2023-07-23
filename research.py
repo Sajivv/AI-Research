@@ -17,6 +17,7 @@ import requests
 import json
 import streamlit as st
 from langchain.schema import SystemMessage
+from fastapi import FastAPI
 
 #load api keys
 load_dotenv()
@@ -192,6 +193,7 @@ agent = initialize_agent(
     memory = memory,
 )
 
+"""
 # 4. web app through streamlit
 def main():
     st.set_page_config(page_title="IdeaHackerLab research agent", page_icon=":star:")
@@ -208,6 +210,21 @@ def main():
 
 if __name__ == '__main__':
     main()
+"""
+
+# 5. set this as an api endpint via fastapi
+app = FastAPI()
+
+class Query(BaseModel):
+    query: str
+
+@app.post("/")
+def researchAgent(query: Query):
+    query = query.query
+    content = agent({"input":query})
+    actual_content = content['output']
+    return actual_content
+
 
 #result = agent({"input": "How does CRISPR make the genes for a blonde baby?"})
 #print(result['output'])
